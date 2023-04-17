@@ -13,7 +13,8 @@
 SoftwareSerial SSerial(RX_PIN, TX_PIN);
 
 // BLE running flag
-bool g_ble_running = true;
+volatile bool g_ble_running = true;
+String g_msg = "";
 
 void *ble_server(void *thread_id) {
   run_ble_server();
@@ -25,8 +26,8 @@ void *run_forwarding(void *thread_id) {
 
   while (true) {
     while (SSerial.available()) {
-      String msg = SSerial.readStringUntil('\n');
-      ble_send_data((uint8_t *)msg.c_str(), msg.length());
+      g_msg = SSerial.readStringUntil('\n'); 
+      ble_send_data((uint8_t *)g_msg.c_str(), g_msg.length()); 
     }
   }
 }
